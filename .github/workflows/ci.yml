@@ -1,0 +1,48 @@
+name: Continuous Integration
+
+on:
+  pull_request:
+    branches:
+      - main
+      - master
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  version-next:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      version-next: ${{ steps.reference.outputs.next-reference }}
+      version-next-strict: ${{ steps.reference.outputs.next-reference }}
+    steps:
+      - uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
+        with:
+          disable-sudo: true
+          egress-policy: block
+          allowed-endpoints: >
+            github.com:443
+
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #6.0.2
+
+      - name: Next Reference
+        id: reference
+        uses: wearefrank/ci-cd-templates/next-reference@3ea6c89c3ffb6c75528377110fea41851bc87c01 #2.4.11
+
+  ci:
+    uses: wearefrank/ci-cd-templates/.github/workflows/ci-generic.yml@3ea6c89c3ffb6c75528377110fea41851bc87c01 #2.4.11
+    needs:
+      - version-next
+    permissions:
+      id-token: write
+      contents: read
+      packages: write
+      attestations: write
+    secrets:
+      token: ${{ secrets.GITHUB_TOKEN }}
+    with:
+      version: ${{ needs.version-next.outputs.version-next }}

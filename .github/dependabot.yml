@@ -1,0 +1,49 @@
+# To get started with Dependabot version updates, you'll need to specify which
+# package ecosystems to update and where the package manifests are located.
+
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/docusaurus"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    commit-message:
+      prefix: "build(dependencies):"
+    groups:
+      docusaurus:
+        patterns: [ "*" ]
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    commit-message:
+      prefix: "build(dependencies):"
+    groups:
+      github-actions:
+        patterns: [ "*" ]
+
+  - package-ecosystem: "npm"
+    directory: "/.github/semantic-release"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    commit-message:
+      prefix: "build(dependencies):"
+    groups:
+      semantic-release:
+        patterns: [ "*" ]
+
+  # - package-ecosystem: "docker"
+  #   directory: "/"
+  #   schedule:
+  #     interval: "daily"
+  #   commit-message:
+  #     prefix: "build(dependencies):"
+  #   # Currently does not seem to be possible to exclude snapshot builds directly.
+  #   # FF tags snapshot builds with 'latest', which leads to dependabot not recognizing snapshots as pre-releases.
+  #   ignore:
+  #     - dependency-name: "frankframework/frankframework"
+  #       versions: ["~> 10"]
